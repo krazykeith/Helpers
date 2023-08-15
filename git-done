@@ -1,0 +1,7 @@
+#!/bin/bash
+main_branch=${1:-main}
+git checkout $main_branch
+git fetch
+git rebase
+git remote update --prune
+git branch --merged | sed '/^\** *'$main_branch'$/d' | xargs git branch -d
