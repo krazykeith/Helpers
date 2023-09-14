@@ -1,0 +1,6 @@
+#!/bin/bash
+main_branch=${1:-main}
+git stash
+git fetch origin $main_branch
+git rebase origin/$main_branch
+git stash pop
