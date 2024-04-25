@@ -1,5 +1,7 @@
 #!/bin/bash
-main_branch=${1:-main}
+#Accept a branch name as an argument, check repository for name of default branch
+main_branch=${1:-$(git symbolic-ref refs/remotes/origin/HEAD | awk -F'/' '{print $NF}')}
+echo $main_branch
 git checkout $main_branch
 git fetch
 git rebase
