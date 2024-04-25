@@ -1,6 +1,22 @@
 #!/bin/bash
-main_branch=${1:-main}
-git stash
+main_branch=${1:-$(git symbolic-ref refs/remotes/origin/HEAD | awk -F'/' '{print $NF}')}
+echo "Default branch: $main_branch"
+
+if git diff --quiet; then
+  echo "No changes to stash"
+else
+  echo "Stashing changes"
+  git stash push -m 'Auto-stash before rebase'
+  stash_created=true
+fi
+
+echo "Fetching $main_branch"
 git fetch origin $main_branch
+
+echo "Rebasing on $main_branch"
 git rebase origin/$main_branch
-git stash pop
+
+if [ "$stash_created" = true ]; then
+  echo "Popping stash"
+  git stash pop
+fi
