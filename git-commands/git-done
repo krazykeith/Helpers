@@ -1,9 +1,13 @@
 #!/bin/bash
 #Accept a branch name as an argument, check repository for name of default branch
 main_branch=${1:-$(git symbolic-ref refs/remotes/origin/HEAD | awk -F'/' '{print $NF}')}
-echo $main_branch
+echo "Default branch: $main_branch"
 git checkout $main_branch
+echo "Fetching $main_branch"
 git fetch
+echo "Rebasing on $main_branch"
 git rebase
+echo "Pruning remote branches"
 git remote update --prune
+echo "Deleting merged branches"
 git branch --merged | sed '/^\** *'$main_branch'$/d' | xargs git branch -d
