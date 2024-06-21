@@ -7,6 +7,11 @@ git config --global rebase.updateRefs true
 git config --global rerere.enabled true
 ```
 
+### Explanation
+
+- `rebase.updateRefs true` - Update branch references when rebasing. See [here](https://git-scm.com/docs/git-config#Documentation/git-config.txt-rebaseupdateRefs) for more information
+- `rerere.enabled true` - Enable Reuse Recorded Resolution. See [here](https://git-scm.com/docs/git-rerere) for more information
+
 ## Adding Custom Git Commands
 
 ```shell
