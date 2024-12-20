@@ -11,3 +11,5 @@ echo "Pruning remote branches"
 git remote update --prune
 echo "Deleting merged branches"
 git branch --merged | sed '/^\** *'$main_branch'$/d' | xargs git branch -d
+echo "Delete local branch which no longer exist on origin"
+git branch -v | grep '\[gone\]' | awk '{print $1}' | xargs git branch -D
