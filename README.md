@@ -1,3 +1,19 @@
+# Helpers
+
+## Tmux Setup
+
+Tmux config with per-pane git branch/worktree display.
+
+```shell
+ln -sf ~/Helpers/tmux/.tmux.conf ~/.tmux.conf
+```
+
+Reload an existing tmux session:
+
+```shell
+tmux source-file ~/.tmux.conf
+```
+
 # Git Helpers
 
 ## Git config updates
