@@ -13,3 +13,23 @@ echo "Deleting merged branches"
 git branch --merged | sed '/^\** *'$main_branch'$/d' | xargs git branch -d
 echo "Delete local branch which no longer exist on origin"
 git branch -v | grep '\[gone\]' | awk '{print $1}' | xargs git branch -D
+echo "Cleaning up worktrees with deleted remote branches"
+git worktree list --porcelain | while read line; do
+  case "$line" in
+    "worktree "*)
+      wt_path="${line#worktree }"
+      ;;
+    "branch "*)
+      branch_name="${line#branch refs/heads/}"
+      # Skip if this is the main worktree (current repo root)
+      if [ "$wt_path" = "$(git rev-parse --show-toplevel)" ]; then
+        continue
+      fi
+      # Check if the remote tracking branch is gone
+      if ! git ls-remote --exit-code --heads origin "$branch_name" > /dev/null 2>&1; then
+        echo "Removing worktree: $wt_path (branch '$branch_name' no longer on remote)"
+        git worktree remove "$wt_path"
+      fi
+      ;;
+  esac
+done
