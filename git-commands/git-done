@@ -25,8 +25,18 @@ git worktree list --porcelain | while read line; do
       if [ "$wt_path" = "$(git rev-parse --show-toplevel)" ]; then
         continue
       fi
+      # Only clean up if the branch previously tracked a remote (i.e. was pushed at some point)
+      upstream=$(git config --get "branch.$branch_name.remote" 2>/dev/null)
+      if [ -z "$upstream" ]; then
+        continue
+      fi
       # Check if the remote tracking branch is gone
       if ! git ls-remote --exit-code --heads origin "$branch_name" > /dev/null 2>&1; then
+        # Skip worktrees with uncommitted changes
+        if [ -n "$(git -C "$wt_path" status --porcelain 2>/dev/null)" ]; then
+          echo "Skipping worktree: $wt_path (has local changes)"
+          continue
+        fi
         echo "Removing worktree: $wt_path (branch '$branch_name' no longer on remote)"
         git worktree remove "$wt_path"
       fi
